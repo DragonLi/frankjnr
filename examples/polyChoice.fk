@@ -1,0 +1,38 @@
+--- start of standard stuff ---
+if : Bool -> {X} -> {X} -> X
+if b t e = case b { true  -> t!
+                  | false -> e! }
+
+data Bool = true | false
+--- end of standard stuff ---
+
+
+interface PolyChoice = choose X: {[PolyChoice] X} -> {[PolyChoice] X} -> X
+-- ...means implicitly:
+-- interface PolyChoice [E] = choose X: {[E|PolyChoice [E|]]X} -> {[E|PolyChoice [E|]]X} -> X
+
+-- Choose a time of day and a language
+nondetGreeting: {[PolyChoice]String}
+nondetGreeting! = choose { case (choose {0} {1})
+                                { 0 -> "Hello!"
+                                | _ -> "Moin!" }}
+                         { choose {"Night!"} {"Nacht!"} }
+
+alwaysPickLeft: {<PolyChoice>X -> X}
+alwaysPickLeft <choose a b -> k> = alwaysPickLeft (k a!)
+alwaysPickLeft x =                 x
+
+-- pick from list until list is empty, then pick left
+pickFromList: {List Bool -> <PolyChoice>X -> X}
+pickFromList (x::xs) <choose a b -> k> = if x {pickFromList xs (k a!)}
+                                              {pickFromList xs (k b!)}
+pickFromList nil     <choose a b -> k> = pickFromList nil (k a!)
+pickFromList _       x                 = x
+
+-- Dont delete these lines, they make this program into a unit test.
+-- #desc   examples/polyChoice.fk
+-- #return "Nacht!"
+
+-- Test run
+main: {String}
+main! = pickFromList [false, false] nondetGreeting!

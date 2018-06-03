@@ -18,16 +18,22 @@ executable frank
                , DesugarSyntax
                , FreshNames
                , Parser
+               , ParserCommon
                , RefineSyntax
+               , RefineSyntaxCommon
+               , RefineSyntaxConcretiseEps
+               , RefineSyntaxSubstitItfAliases
                , Shonky.Semantics
                , Shonky.Syntax
                , Syntax
                , TypeCheck
                , TypeCheckCommon
                , Unification
+               , Debug
 
   build-depends: Unique
                , base >= 4.7 && < 5
+               , bytestring
                , containers
                , indentation-trifecta
                , mtl
@@ -42,7 +48,7 @@ executable frank
                , unordered-containers
                , cmdargs
   main-is:          Frank.hs
-  ghc-options:      -threaded -rtsopts -with-rtsopts=-N 
+  ghc-options:      -threaded -rtsopts -with-rtsopts=-N
   default-language: Haskell2010
 
 source-repository head
